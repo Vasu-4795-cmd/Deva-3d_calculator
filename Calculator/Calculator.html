@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>3D Neon Calculator</title>
+  <title>3D Adjustable Calculator</title>
   <style>
     * {
       box-sizing: border-box;
@@ -13,62 +13,54 @@
     body {
       margin: 0;
       height: 100vh;
-      background: radial-gradient(circle at 30% 30%, #0a0a0a, #000);
-      overflow: hidden;
+      background: radial-gradient(circle at center, #121212, #000);
       display: flex;
       align-items: center;
       justify-content: center;
-      animation: bgPulse 8s ease-in-out infinite alternate;
-    }
-
-    @keyframes bgPulse {
-      0% {
-        background: radial-gradient(circle at top left, #111, #000);
-      }
-      100% {
-        background: radial-gradient(circle at bottom right, #222, #000);
-      }
+      overflow: hidden;
     }
 
     .calculator {
-      background: rgba(20, 20, 20, 0.8);
+      background: rgba(40, 40, 40, 0.9);
       border-radius: 20px;
-      box-shadow: 0 0 20px #0ff3, 0 0 40px #00f2 inset;
       padding: 20px;
-      width: 330px;
-      transform: perspective(800px) rotateX(8deg);
-      backdrop-filter: blur(10px);
+      box-shadow: 0 0 30px #0ff5;
+      width: 90vw;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      transform: perspective(800px) rotateX(5deg);
     }
 
     .display {
+      height: 70px;
       background: #111;
       color: #0ff;
-      font-size: 2.5rem;
-      padding: 15px;
+      font-size: 2rem;
       border-radius: 10px;
+      padding: 10px;
       text-align: right;
       overflow-x: auto;
-      box-shadow: inset 0 0 10px #0ff4;
+      box-shadow: inset 0 0 10px #0ff3;
+      margin-bottom: 15px;
     }
 
     .buttons {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-      margin-top: 20px;
+      grid-auto-rows: minmax(60px, auto);
+      gap: 12px;
     }
 
     button {
-      padding: 20px;
-      font-size: 1.3rem;
       border: none;
+      font-size: 1.5rem;
       border-radius: 12px;
+      background: linear-gradient(145deg, #222, #000);
       color: #fff;
-      background: linear-gradient(145deg, #1a1a1a, #000);
-      box-shadow: 4px 4px 10px #000, -4px -4px 10px #1a1a1a;
+      box-shadow: 4px 4px 10px #000, -4px -4px 10px #333;
       cursor: pointer;
       transition: all 0.2s ease;
-      transform: translateZ(0);
     }
 
     button:hover {
@@ -78,13 +70,13 @@
     }
 
     button:active {
-      transform: translateY(2px);
+      transform: scale(0.98);
       box-shadow: inset 2px 2px 5px #000;
     }
 
     .equal {
       grid-column: span 2;
-      background: linear-gradient(to right, #0ff, #0cf);
+      background: linear-gradient(135deg, #0ff, #09f);
       color: #000;
       font-weight: bold;
     }
@@ -95,7 +87,14 @@
     }
 
     .clear:hover {
-      background: #ff5050;
+      background: #ff5555;
+    }
+
+    @media screen and (max-width: 400px) {
+      .calculator {
+        transform: none;
+        box-shadow: 0 0 15px #0ff;
+      }
     }
   </style>
 </head>
@@ -103,26 +102,26 @@
   <div class="calculator">
     <div class="display" id="display">0</div>
     <div class="buttons">
-      <button onclick="clearDisplay()" class="clear">C</button>
+      <button class="clear" onclick="clearDisplay()">C</button>
+      <button onclick="press('(')">(</button>
+      <button onclick="press(')')">)</button>
       <button onclick="press('/')">÷</button>
-      <button onclick="press('*')">×</button>
-      <button onclick="press('-')">−</button>
-      
+
       <button onclick="press('7')">7</button>
       <button onclick="press('8')">8</button>
       <button onclick="press('9')">9</button>
-      <button onclick="press('+')">+</button>
-      
+      <button onclick="press('*')">×</button>
+
       <button onclick="press('4')">4</button>
       <button onclick="press('5')">5</button>
       <button onclick="press('6')">6</button>
-      <button onclick="press('(')">(</button>
-      
+      <button onclick="press('-')">−</button>
+
       <button onclick="press('1')">1</button>
       <button onclick="press('2')">2</button>
       <button onclick="press('3')">3</button>
-      <button onclick="press(')')">)</button>
-      
+      <button onclick="press('+')">+</button>
+
       <button onclick="press('0')">0</button>
       <button onclick="press('.')">.</button>
       <button class="equal" onclick="calculate()">=</button>
@@ -142,10 +141,9 @@
 
     function calculate() {
       try {
-        display.textContent = eval(
-          display.textContent.replace(/÷/g, "/").replace(/×/g, "*")
-        );
-      } catch (e) {
+        const result = eval(display.textContent.replace(/÷/g, "/").replace(/×/g, "*"));
+        display.textContent = result;
+      } catch {
         display.textContent = "Error";
       }
     }
