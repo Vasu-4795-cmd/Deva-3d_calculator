@@ -5,137 +5,139 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>3D Calculator</title>
   <style>
-    body {
-      background: linear-gradient(to right, #2c3e50, #4ca1af);
+    * {
+      box-sizing: border-box;
       font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+    }
+
+    body {
       margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      animation: backgroundLight 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes backgroundLight {
+      0% { background: radial-gradient(circle at top left, #0ff, #111); }
+      100% { background: radial-gradient(circle at bottom right, #f0f, #111); }
     }
 
     .calculator {
-      background: #1f1f1f;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
       border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-      padding: 30px;
-      perspective: 1000px;
-      transform-style: preserve-3d;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+      width: 320px;
+      transform: perspective(1000px) rotateX(10deg);
+      transition: all 0.5s;
     }
 
     .display {
-      background: #000;
-      color: #0f0;
-      font-size: 2em;
-      text-align: right;
-      padding: 10px 20px;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 10px;
-      margin-bottom: 20px;
-      height: 60px;
-      overflow: hidden;
-      box-shadow: inset 0 0 10px #0f0;
+      text-align: right;
+      font-size: 2em;
+      padding: 10px;
+      color: #0ff;
+      box-shadow: inset 0 0 10px rgba(0,255,255,0.3);
+      overflow-x: auto;
     }
 
-    .keys {
+    .buttons {
+      margin-top: 20px;
       display: grid;
-      grid-template-columns: repeat(4, 80px);
+      grid-template-columns: repeat(4, 1fr);
       gap: 15px;
-      justify-content: center;
     }
 
-    .key {
-      background: #333;
+    button {
+      padding: 20px;
+      font-size: 1.2em;
       border: none;
-      color: white;
-      font-size: 1.5em;
-      border-radius: 12px;
-      height: 60px;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.5);
-      transform: translateZ(0);
+      border-radius: 15px;
+      background: linear-gradient(145deg, #111, #222);
+      box-shadow: 4px 4px 10px #000, -4px -4px 10px #333;
+      color: #fff;
       cursor: pointer;
+      transition: all 0.2s ease;
     }
 
-    .key:hover {
-      transform: translateY(-4px) rotateX(10deg);
-      box-shadow: 0 12px 15px rgba(0, 255, 0, 0.3);
+    button:hover {
+      background: #0ff;
+      color: #000;
+      box-shadow: 0 0 15px #0ff;
     }
 
-    .key:active {
+    button:active {
       transform: translateY(2px);
-      box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.7);
+      box-shadow: inset 2px 2px 5px #000;
     }
 
-    .key.operator {
-      background-color: #e67e22;
-    }
-
-    .key.equal {
-      background-color: #27ae60;
+    .equal {
       grid-column: span 2;
+      background: linear-gradient(145deg, #0ff, #0cf);
+      color: #000;
+      font-weight: bold;
     }
 
-    .key.clear {
-      background-color: #c0392b;
+    .equal:hover {
+      background: #0cf;
     }
-
   </style>
 </head>
 <body>
-
   <div class="calculator">
     <div class="display" id="display">0</div>
-    <div class="keys">
-      <button class="key clear" onclick="clearDisplay()">C</button>
-      <button class="key" onclick="appendValue('(')">(</button>
-      <button class="key" onclick="appendValue(')')">)</button>
-      <button class="key operator" onclick="appendValue('/')">÷</button>
-
-      <button class="key" onclick="appendValue('7')">7</button>
-      <button class="key" onclick="appendValue('8')">8</button>
-      <button class="key" onclick="appendValue('9')">9</button>
-      <button class="key operator" onclick="appendValue('*')">×</button>
-
-      <button class="key" onclick="appendValue('4')">4</button>
-      <button class="key" onclick="appendValue('5')">5</button>
-      <button class="key" onclick="appendValue('6')">6</button>
-      <button class="key operator" onclick="appendValue('-')">−</button>
-
-      <button class="key" onclick="appendValue('1')">1</button>
-      <button class="key" onclick="appendValue('2')">2</button>
-      <button class="key" onclick="appendValue('3')">3</button>
-      <button class="key operator" onclick="appendValue('+')">+</button>
-
-      <button class="key" onclick="appendValue('0')">0</button>
-      <button class="key" onclick="appendValue('.')">.</button>
-      <button class="key equal" onclick="calculateResult()">=</button>
+    <div class="buttons">
+      <button onclick="press('7')">7</button>
+      <button onclick="press('8')">8</button>
+      <button onclick="press('9')">9</button>
+      <button onclick="press('/')">÷</button>
+      
+      <button onclick="press('4')">4</button>
+      <button onclick="press('5')">5</button>
+      <button onclick="press('6')">6</button>
+      <button onclick="press('*')">×</button>
+      
+      <button onclick="press('1')">1</button>
+      <button onclick="press('2')">2</button>
+      <button onclick="press('3')">3</button>
+      <button onclick="press('-')">−</button>
+      
+      <button onclick="press('0')">0</button>
+      <button onclick="press('.')">.</button>
+      <button class="equal" onclick="calculate()">=</button>
+      <button onclick="press('+')">+</button>
+      
+      <button onclick="clearDisplay()" style="grid-column: span 4; background: #f00; color: #fff;">C</button>
     </div>
   </div>
 
   <script>
     const display = document.getElementById("display");
 
-    function appendValue(val) {
-      if (display.textContent === "0") {
-        display.textContent = val;
-      } else {
-        display.textContent += val;
+    function press(val) {
+      if (display.textContent === "0") display.textContent = val;
+      else display.textContent += val;
+    }
+
+    function calculate() {
+      try {
+        display.textContent = eval(display.textContent.replace(/÷/g, "/").replace(/×/g, "*"));
+      } catch (e) {
+        display.textContent = "Error";
       }
     }
 
     function clearDisplay() {
       display.textContent = "0";
     }
-
-    function calculateResult() {
-      try {
-        display.textContent = eval(display.textContent);
-      } catch (e) {
-        display.textContent = "Error";
-      }
-    }
   </script>
-
 </body>
 </html>
